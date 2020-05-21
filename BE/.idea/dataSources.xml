@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="airbnb" uuid="b5774087-5f36-4167-9661-a37fead269e0">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://airbnb12.ctw7g0gvkwu5.ap-northeast-2.rds.amazonaws.com:3306/airbnb</jdbc-url>
+    </data-source>
+  </component>
+</project>
