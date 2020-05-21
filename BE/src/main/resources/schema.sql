@@ -36,11 +36,13 @@ CREATE TABLE IF NOT EXISTS accommodation (
 
 CREATE TABLE IF NOT EXISTS booking (
     id            BIGINT,
-    accommodates  TINYINT,
+    adult         TINYINT,
+    child         TINYINT,
+    infant        TINYINT,
     nights        SMALLINT,
     final_price   FLOAT(3, 2),
-    begin_date    DATE,
-    end_date      DATE,
+    check_in_date    DATE,
+    check_out_date      DATE,
     bookable      TINYINT(1),
     tourism_tax   FLOAT(3, 2),
     user          BIGINT,
