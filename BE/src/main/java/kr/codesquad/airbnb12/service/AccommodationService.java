@@ -7,8 +7,11 @@ import kr.codesquad.airbnb12.dto.FilteredAccommodationsResponseDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
 
 @Service
 public class AccommodationService {
@@ -21,13 +24,19 @@ public class AccommodationService {
 
     public FilteredAccommodationsResponseDto getAllAccommodations() {
         List<AccommodationSummary> accommodationSummaries = accommodationDaoImpl.findAllAccommodationSummaries();
-        List<Image> allImages = accommodationDaoImpl.findAllImages();
-        List<Integer> priceDistribution = new ArrayList<>();
+        List<Long> accommodationIds = accommodationSummaries.stream()
+                                                            .map(AccommodationSummary::getAccommodationId)
+                                                            .collect(Collectors.toList());
+        List<Image> relatedImages = accommodationDaoImpl.findImagesByAccommodationIds(accommodationIds);
+        List<Integer> priceDistribution = new ArrayList<>(Collections.nCopies(PRICE_DISTRIBUTION_SIZE, 0));
         accommodationSummaries.forEach(accommodationSummary -> {
-            List<String> images = allImages.stream()
-                                           .filter(image -> accommodationSummary.getAccommodationId().equals(image.getAccommodation()))
-                                           .map(Image::getUrl)
-                                           .collect(Collectors.toList());
+            int indexOfPriceDistribution = (int) ((accommodationSummary.getFinalPrice() / PRICE_RANGE_DIFFERENCE) - 1);
+            int countOfThePrices = priceDistribution.get(indexOfPriceDistribution);
+            priceDistribution.set(indexOfPriceDistribution, countOfThePrices + 1);
+            List<String> images = relatedImages.stream()
+                                               .filter(image -> accommodationSummary.getAccommodationId().equals(image.getAccommodation()))
+                                               .map(Image::getUrl)
+                                               .collect(Collectors.toList());
             accommodationSummary.setThumbnailImages(images);
         });
         return FilteredAccommodationsResponseDto.create(accommodationSummaries.size(), priceDistribution, accommodationSummaries);

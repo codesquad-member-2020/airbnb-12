@@ -5,6 +5,9 @@ import kr.codesquad.airbnb12.domain.Image;
 import kr.codesquad.airbnb12.domain.Location;
 import kr.codesquad.airbnb12.dto.AccommodationSummary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -15,8 +18,11 @@ public class AccommodationDaoImpl implements AccommodationDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
     public AccommodationDaoImpl(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
     }
 
     @Override
@@ -62,10 +68,14 @@ public class AccommodationDaoImpl implements AccommodationDao {
                                                  .build());
     }
 
-    public List<Image> findAllImages() {
-        String sql = "SELECT id, url, accommodation FROM image";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> Image.create(rs.getLong("id"),
-                                                                    rs.getString("url"),
-                                                                    rs.getLong("accommodation")));
+    public List<Image> findImagesByAccommodationIds(List<Long> accommodationIds) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource("accommodationIds", accommodationIds);
+        String sql = "SELECT id, url, accommodation FROM image " +
+                     "WHERE accommodation IN (:accommodationIds)";
+        return namedParameterJdbcTemplate.query(sql, namedParameters, (rs, rowNum) ->
+            Image.create(rs.getLong("id"),
+                         rs.getString("url"),
+                         rs.getLong("accommodation"))
+        );
     }
 }
