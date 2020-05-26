@@ -18,3 +18,11 @@ export const configurePrice = data => {
         data
     };
 };
+
+export const configurePriceDistribution = data => {
+    return {
+        type: "CONFIGURE_PRICE_DISTRIBUTION",
+        data
+    };
+};
+
