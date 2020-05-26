@@ -1,3 +1,25 @@
+feat/fe/issue-6
+import React, { useState } from 'react';
+import { ThemeProvider } from 'styled-components';
+import GlobalStyles from '../styles/GlobalStyle';
+import FilterForm from './FilterForm';
+import SearchResultTitle from './SearchResultTitle';
+import SearchResultList from './SearchResultList';
+import Theme from '../styles/Theme';
+
+const App = () => {
+
+  return (
+    <ThemeProvider theme={Theme}>
+      <GlobalStyles />
+      <FilterForm />
+      <SearchResultTitle count={count} />
+      <SearchResultList items={items} />
+    </ThemeProvider>
+  );
+};
+
+=======
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { configurePriceDistribution } from '../actions/filterAction';
@@ -80,4 +102,5 @@ const App = () => {
 // };
 
 
+ dev
 export default App;
