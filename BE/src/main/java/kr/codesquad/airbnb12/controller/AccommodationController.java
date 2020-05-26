@@ -6,7 +6,10 @@ import kr.codesquad.airbnb12.service.AccommodationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 public class AccommodationController {
@@ -18,8 +21,7 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations")
-    public ResponseEntity<ApiResponse<FilteredAccommodationsResponseDto>> getAccommodationsList() {
-
-        return new ResponseEntity<>(ApiResponse.OK(accommodationService.getAllAccommodations()), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<FilteredAccommodationsResponseDto>> getFilteredAccommodations(@RequestParam Map<String, String> requestParameters) {
+        return new ResponseEntity<>(ApiResponse.OK(accommodationService.getFilteredAccommodations(requestParameters)), HttpStatus.OK);
     }
 }
