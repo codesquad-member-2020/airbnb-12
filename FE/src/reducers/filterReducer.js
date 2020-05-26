@@ -1,11 +1,13 @@
 const initialValue = {
     checkin: "",
     checkout: "",
+    staying: 1,
     adults: 0,
     children: 0,
     infants: 0,
     priceMin: 0,
-    priceMax: 1000
+    priceMax: 0,
+    priceDistribution: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 };
 
 export const filterReducer = (state = initialValue, action) => {
@@ -14,8 +16,9 @@ export const filterReducer = (state = initialValue, action) => {
         case "CONFIGURE_DATE":
             return {
                 ...state,
-                checkin: data.checkIn,
-                checkout: data.checkOut
+                checkin: data.checkin,
+                checkout: data.checkout,
+                staying: getStaying(data.checkout, data.checkin)
             };
         case "CONFIGURE_GUEST":
             return {
@@ -30,7 +33,16 @@ export const filterReducer = (state = initialValue, action) => {
                 priceMin: data.priceMin,
                 priceMax: data.priceMax
             };
+        case "CONFIGURE_PRICE_DISTRIBUTION":
+            return {
+                ...state,
+                priceDistribution: data.priceDistribution
+            };
         default:
             return state;
     }
 };
+
+const getStaying = (checkin, checkout) => {
+    return (new Date(checkout).getTime() - new Date(checkin).getTime()) / (1000 * 60 * 60 * 24)
+}
