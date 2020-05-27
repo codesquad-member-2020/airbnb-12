@@ -76,15 +76,24 @@ public class AccommodationService {
     }
 
     private Map<String, LocalDate> parseDateParameter(String checkInDate, String checkOutDate, LocalDate checkInDefaultDate, LocalDate checkOutDefaultDate) {
-        LocalDate checkIn = Optional.ofNullable(checkInDate)
+        boolean invalidCheckInDate = Optional.ofNullable(checkInDate)
                 .filter(this::isInstanceOfLocalDate)
-                .map(LocalDate::parse)
-                .orElseGet(() -> checkInDefaultDate);
-        LocalDate checkOut = Optional.ofNullable(checkOutDate)
+                .map(dateParameter -> !dateParameter.isEmpty())
+                .orElseGet(() -> Boolean.TRUE);
+        boolean inValidCheckOutDate = Optional.ofNullable(checkOutDate)
                 .filter(this::isInstanceOfLocalDate)
-                .map(LocalDate::parse)
-                .orElseGet(() -> checkOutDefaultDate);
-
+                .map(dateParameter -> !dateParameter.isEmpty())
+                .orElseGet(() -> Boolean.TRUE);
+        if (invalidCheckInDate || inValidCheckOutDate) {
+            return new HashMap<String, LocalDate>() {
+                {
+                    put(CHECK_IN_PARAMETER, checkInDefaultDate);
+                    put(CHECK_OUT_PARAMETER, checkOutDefaultDate);
+                }
+            };
+        }
+        LocalDate checkIn = LocalDate.parse(checkInDate);
+        LocalDate checkOut = LocalDate.parse(checkOutDate);
         if (checkOut.compareTo(checkIn) < 0 || checkIn.compareTo(TODAY) < 0 || checkOut.compareTo(TODAY) < 0) {
             return new HashMap<String, LocalDate>() {
                 {
@@ -93,7 +102,6 @@ public class AccommodationService {
                 }
             };
         }
-
         return new HashMap<String, LocalDate>() {
             {
                 put(CHECK_IN_PARAMETER, checkIn);
