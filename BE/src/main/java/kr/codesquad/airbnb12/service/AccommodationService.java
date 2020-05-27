@@ -48,16 +48,18 @@ public class AccommodationService {
     }
 
     private TrimmedParameters trimRequestParameters(Map<String, String> requestParameters) {
-        LocalDate checkIn = parseDateParameter(requestParameters.get(CHECK_IN_PARAMETER), TODAY);
-        LocalDate checkOut = parseDateParameter(requestParameters.get(CHECK_OUT_PARAMETER), TODAY);
+
+        Map<String, LocalDate> dateParameters = parseDateParameter(requestParameters.get(CHECK_IN_PARAMETER), requestParameters.get(CHECK_OUT_PARAMETER), TODAY, TODAY.plusYears(1));
         Integer adults = parseHeadcountParameter(requestParameters.get(ADULT_PARAMETER), NOBODY);
         Integer children = parseHeadcountParameter(requestParameters.get(CHILDREN_PARAMETER), NOBODY);
         Integer infants = parseHeadcountParameter(requestParameters.get(INFANT_PARAMETER), NOBODY);
         Double minimumPrice = parsePriceParameter(requestParameters.get(MINIMUM_PRICE_PARAMETER), ZERO_DOLLAR);
         Double maximumPrice = parsePriceParameter(requestParameters.get(MAXIMUM_PRICE_PARAMETER), MAXIMUM_DOLLAR);
+        System.out.println(dateParameters.get(CHECK_IN_PARAMETER));
+        System.out.println(dateParameters.get(CHECK_OUT_PARAMETER));
         return new TrimmedParameters.Builder()
-                                    .checkIn(checkIn)
-                                    .checkOut(checkOut)
+                                    .checkIn(dateParameters.get(CHECK_IN_PARAMETER))
+                                    .checkOut(dateParameters.get(CHECK_OUT_PARAMETER))
                                     .adults(adults)
                                     .children(children)
                                     .infants(infants)
@@ -73,11 +75,31 @@ public class AccommodationService {
                 .orElseGet(() -> defaultValue);
     }
 
-    private LocalDate parseDateParameter(String parameterName, LocalDate defaultValue) {
-        return Optional.ofNullable(parameterName)
+    private Map<String, LocalDate> parseDateParameter(String checkInDate, String checkOutDate, LocalDate checkInDefaultDate, LocalDate checkOutDefaultDate) {
+        LocalDate checkIn = Optional.ofNullable(checkInDate)
                 .filter(this::isInstanceOfLocalDate)
-                .map(dateParameter -> ensureValidLocalDate(dateParameter, defaultValue))
-                .orElseGet(() -> defaultValue);
+                .map(LocalDate::parse)
+                .orElseGet(() -> checkInDefaultDate);
+        LocalDate checkOut = Optional.ofNullable(checkOutDate)
+                .filter(this::isInstanceOfLocalDate)
+                .map(LocalDate::parse)
+                .orElseGet(() -> checkOutDefaultDate);
+
+        if (checkOut.compareTo(checkIn) < 0 || checkIn.compareTo(TODAY) < 0 || checkOut.compareTo(TODAY) < 0) {
+            return new HashMap<String, LocalDate>() {
+                {
+                    put(CHECK_IN_PARAMETER, checkInDefaultDate);
+                    put(CHECK_OUT_PARAMETER, checkOutDefaultDate);
+                }
+            };
+        }
+
+        return new HashMap<String, LocalDate>() {
+            {
+                put(CHECK_IN_PARAMETER, checkIn);
+                put(CHECK_OUT_PARAMETER, checkOut);
+            }
+        };
     }
 
     private Integer parseHeadcountParameter(String parameterName, Integer defaultValue) {
@@ -126,12 +148,5 @@ public class AccommodationService {
             return defaultValue;
         }
         return Integer.parseInt(priceParameter);
-    }
-
-    private LocalDate ensureValidLocalDate(String dateParameter, LocalDate defaultValue) {
-        if (TODAY.compareTo(LocalDate.parse(dateParameter)) < 0) {
-            return defaultValue;
-        }
-        return LocalDate.parse(dateParameter);
     }
 }
