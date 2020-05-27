@@ -8,13 +8,14 @@ import kr.codesquad.airbnb12.dto.TrimmedParameters;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToBooking.NOBODY;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToBooking.TODAY;
 import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToParameterNames.*;
-import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToBooking.*;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
 
 @Service
 public class AccommodationService {
@@ -66,15 +67,71 @@ public class AccommodationService {
     }
 
     private Double parsePriceParameter(String parameterName, Double defaultValue) {
-        return Double.valueOf(Optional.ofNullable(parameterName).orElseGet(() -> String.valueOf(defaultValue)));
+        return Optional.ofNullable(parameterName)
+                .filter(this::isInstanceOfDouble)
+                .map(priceParameter -> ensureValidPrice(priceParameter, defaultValue))
+                .orElseGet(() -> defaultValue);
     }
 
     private LocalDate parseDateParameter(String parameterName, LocalDate defaultValue) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(Optional.ofNullable(parameterName).orElseGet(() -> String.valueOf(defaultValue)), formatter);
+        return Optional.ofNullable(parameterName)
+                .filter(this::isInstanceOfLocalDate)
+                .map(dateParameter -> ensureValidLocalDate(dateParameter, defaultValue))
+                .orElseGet(() -> defaultValue);
     }
 
     private Integer parseHeadcountParameter(String parameterName, Integer defaultValue) {
-        return Integer.valueOf(Optional.ofNullable(parameterName).orElseGet(() -> String.valueOf(defaultValue)));
+        return Optional.ofNullable(parameterName)
+                .filter(this::isInstanceOfInteger)
+                .map(headCountParameter -> ensureValidHeadCount(headCountParameter, defaultValue))
+                .orElseGet(() -> defaultValue);
+    }
+
+    private boolean isInstanceOfDouble(String priceParameter) {
+        try {
+            Double.parseDouble(priceParameter);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isInstanceOfInteger(String headCountParameter) {
+        try {
+            Integer.parseInt(headCountParameter);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private boolean isInstanceOfLocalDate(String dateParameter) {
+        try {
+            LocalDate.parse(dateParameter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    private Double ensureValidPrice(String priceParameter, Double defaultValue) {
+        if (Double.parseDouble(priceParameter) < 0) {
+            return defaultValue;
+        }
+        return Double.parseDouble(priceParameter);
+    }
+
+    private Integer ensureValidHeadCount(String priceParameter, Integer defaultValue) {
+        if (Integer.parseInt(priceParameter) < 0) {
+            return defaultValue;
+        }
+        return Integer.parseInt(priceParameter);
+    }
+
+    private LocalDate ensureValidLocalDate(String dateParameter, LocalDate defaultValue) {
+        if (TODAY.compareTo(LocalDate.parse(dateParameter)) < 0) {
+            return defaultValue;
+        }
+        return LocalDate.parse(dateParameter);
     }
 }
