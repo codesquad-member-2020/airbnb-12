@@ -1,7 +1,5 @@
 package kr.codesquad.airbnb12.dto;
 
-import lombok.ToString;
-
 import java.time.LocalDate;
 
 public class TrimmedParameters {

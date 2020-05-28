@@ -28,7 +28,7 @@ public class AccommodationService {
 
     public FilteredAccommodationsResponseDto getFilteredAccommodations(Map<String, String> requestParameters) {
         TrimmedParameters trimmedParameters = trimRequestParameters(requestParameters);
-        List<AccommodationSummary> accommodationSummaries = accommodationDaoImpl.findAllAccommodationSummaries();
+        List<AccommodationSummary> accommodationSummaries = accommodationDaoImpl.findAllAccommodationSummaries(trimmedParameters);
         List<Long> accommodationIds = accommodationSummaries.stream()
                                                             .map(AccommodationSummary::getAccommodationId)
                                                             .collect(Collectors.toList());
@@ -48,15 +48,12 @@ public class AccommodationService {
     }
 
     private TrimmedParameters trimRequestParameters(Map<String, String> requestParameters) {
-
         Map<String, LocalDate> dateParameters = parseDateParameter(requestParameters.get(CHECK_IN_PARAMETER), requestParameters.get(CHECK_OUT_PARAMETER), TODAY, TODAY.plusYears(1));
         Integer adults = parseHeadcountParameter(requestParameters.get(ADULT_PARAMETER), NOBODY);
         Integer children = parseHeadcountParameter(requestParameters.get(CHILDREN_PARAMETER), NOBODY);
         Integer infants = parseHeadcountParameter(requestParameters.get(INFANT_PARAMETER), NOBODY);
         Double minimumPrice = parsePriceParameter(requestParameters.get(MINIMUM_PRICE_PARAMETER), ZERO_DOLLAR);
         Double maximumPrice = parsePriceParameter(requestParameters.get(MAXIMUM_PRICE_PARAMETER), MAXIMUM_DOLLAR);
-        System.out.println(dateParameters.get(CHECK_IN_PARAMETER));
-        System.out.println(dateParameters.get(CHECK_OUT_PARAMETER));
         return new TrimmedParameters.Builder()
                                     .checkIn(dateParameters.get(CHECK_IN_PARAMETER))
                                     .checkOut(dateParameters.get(CHECK_OUT_PARAMETER))
@@ -70,20 +67,20 @@ public class AccommodationService {
 
     private Double parsePriceParameter(String parameterName, Double defaultValue) {
         return Optional.ofNullable(parameterName)
-                .filter(this::isInstanceOfDouble)
-                .map(priceParameter -> ensureValidPrice(priceParameter, defaultValue))
-                .orElseGet(() -> defaultValue);
+                       .filter(this::isInstanceOfDouble)
+                       .map(priceParameter -> ensureValidPrice(priceParameter, defaultValue))
+                       .orElseGet(() -> defaultValue);
     }
 
     private Map<String, LocalDate> parseDateParameter(String checkInDate, String checkOutDate, LocalDate checkInDefaultDate, LocalDate checkOutDefaultDate) {
         boolean invalidCheckInDate = Optional.ofNullable(checkInDate)
-                .filter(this::isInstanceOfLocalDate)
-                .map(dateParameter -> !dateParameter.isEmpty())
-                .orElseGet(() -> Boolean.TRUE);
+                                             .filter(this::isInstanceOfLocalDate)
+                                             .map(dateParameter -> dateParameter.isEmpty())
+                                             .orElseGet(() -> Boolean.TRUE);
         boolean inValidCheckOutDate = Optional.ofNullable(checkOutDate)
-                .filter(this::isInstanceOfLocalDate)
-                .map(dateParameter -> !dateParameter.isEmpty())
-                .orElseGet(() -> Boolean.TRUE);
+                                              .filter(this::isInstanceOfLocalDate)
+                                              .map(dateParameter -> dateParameter.isEmpty())
+                                              .orElseGet(() -> Boolean.TRUE);
         if (invalidCheckInDate || inValidCheckOutDate) {
             return new HashMap<String, LocalDate>() {
                 {
@@ -112,9 +109,9 @@ public class AccommodationService {
 
     private Integer parseHeadcountParameter(String parameterName, Integer defaultValue) {
         return Optional.ofNullable(parameterName)
-                .filter(this::isInstanceOfInteger)
-                .map(headCountParameter -> ensureValidHeadCount(headCountParameter, defaultValue))
-                .orElseGet(() -> defaultValue);
+                       .filter(this::isInstanceOfInteger)
+                       .map(headCountParameter -> ensureValidHeadCount(headCountParameter, defaultValue))
+                       .orElseGet(() -> defaultValue);
     }
 
     private boolean isInstanceOfDouble(String priceParameter) {
