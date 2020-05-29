@@ -48,70 +48,71 @@ public class AccommodationService {
     }
 
     private TrimmedParameters trimRequestParameters(Map<String, String> requestParameters) {
-        Map<String, LocalDate> dateParameters = parseDateParameter(requestParameters.get(CHECK_IN_PARAMETER), requestParameters.get(CHECK_OUT_PARAMETER), TODAY, TODAY.plusYears(1));
-        Integer adults = parseHeadcountParameter(requestParameters.get(ADULT_PARAMETER), NOBODY);
-        Integer children = parseHeadcountParameter(requestParameters.get(CHILDREN_PARAMETER), NOBODY);
-        Integer infants = parseHeadcountParameter(requestParameters.get(INFANT_PARAMETER), NOBODY);
-        Double minimumPrice = parsePriceParameter(requestParameters.get(MINIMUM_PRICE_PARAMETER), ZERO_DOLLAR);
-        Double maximumPrice = parsePriceParameter(requestParameters.get(MAXIMUM_PRICE_PARAMETER), MAXIMUM_DOLLAR);
+        Map<String, LocalDate> dateParameters = parseDateParameters(requestParameters.get(CHECK_IN_PARAMETER),
+                                                                    requestParameters.get(CHECK_OUT_PARAMETER));
+        Map<String, Double> priceParameters = parsePriceParameters(requestParameters.get(MINIMUM_PRICE_PARAMETER),
+                                                                   requestParameters.get(MAXIMUM_PRICE_PARAMETER));
+        Integer adults = parseHeadcountParameter(requestParameters.get(ADULT_PARAMETER));
+        Integer children = parseHeadcountParameter(requestParameters.get(CHILDREN_PARAMETER));
+        Integer infants = parseHeadcountParameter(requestParameters.get(INFANT_PARAMETER));
         return new TrimmedParameters.Builder()
                                     .checkIn(dateParameters.get(CHECK_IN_PARAMETER))
                                     .checkOut(dateParameters.get(CHECK_OUT_PARAMETER))
                                     .adults(adults)
                                     .children(children)
                                     .infants(infants)
-                                    .minimumPrice(minimumPrice)
-                                    .maximumPrice(maximumPrice)
+                                    .minimumPrice(priceParameters.get(MINIMUM_PRICE_PARAMETER))
+                                    .maximumPrice(priceParameters.get(MAXIMUM_PRICE_PARAMETER))
                                     .build();
+    }
+
+    private Map<String, Double> parsePriceParameters(String minimumPriceParameter, String maximumPriceParameter) {
+        Double minimumPrice = parsePriceParameter(minimumPriceParameter, ZERO_DOLLAR);
+        Double maximumPrice = parsePriceParameter(maximumPriceParameter, MAXIMUM_DOLLAR);
+        if (isInvalidPrices(minimumPrice, maximumPrice)) {
+            minimumPrice = ZERO_DOLLAR;
+            maximumPrice = MAXIMUM_DOLLAR;
+        }
+        return defineValueOfRelatedParameters(MINIMUM_PRICE_PARAMETER, minimumPrice, MAXIMUM_PRICE_PARAMETER, maximumPrice);
+    }
+
+    private boolean isInvalidPrices(Double minimumPrice, Double maximumPrice) {
+        return minimumPrice > maximumPrice;
     }
 
     private Double parsePriceParameter(String parameterName, Double defaultValue) {
         return Optional.ofNullable(parameterName)
-                       .filter(this::isInstanceOfDouble)
-                       .map(priceParameter -> ensureValidPrice(priceParameter, defaultValue))
-                       .orElseGet(() -> defaultValue);
+                .filter(this::isInstanceOfDouble)
+                .map(priceParameter -> ensureValidPrice(priceParameter, defaultValue))
+                .orElseGet(() -> defaultValue);
     }
 
-    private Map<String, LocalDate> parseDateParameter(String checkInDate, String checkOutDate, LocalDate checkInDefaultDate, LocalDate checkOutDefaultDate) {
-        boolean invalidCheckInDate = Optional.ofNullable(checkInDate)
-                                             .filter(this::isInstanceOfLocalDate)
-                                             .map(dateParameter -> dateParameter.isEmpty())
-                                             .orElseGet(() -> Boolean.TRUE);
-        boolean inValidCheckOutDate = Optional.ofNullable(checkOutDate)
-                                              .filter(this::isInstanceOfLocalDate)
-                                              .map(dateParameter -> dateParameter.isEmpty())
-                                              .orElseGet(() -> Boolean.TRUE);
+    private Boolean parseDateParameters(String parameterName) {
+        return Optional.ofNullable(parameterName)
+                       .filter(this::isInstanceOfLocalDate)
+                       .map(String::isEmpty)
+                       .orElseGet(() -> Boolean.TRUE);
+    }
+
+    private Map<String, LocalDate> parseDateParameters(String checkInDate, String checkOutDate) {
+        boolean invalidCheckInDate = parseDateParameters(checkInDate);
+        boolean inValidCheckOutDate = parseDateParameters(checkOutDate);
         if (invalidCheckInDate || inValidCheckOutDate) {
-            return new HashMap<String, LocalDate>() {
-                {
-                    put(CHECK_IN_PARAMETER, checkInDefaultDate);
-                    put(CHECK_OUT_PARAMETER, checkOutDefaultDate);
-                }
-            };
+            return defineValueOfRelatedParameters(CHECK_IN_PARAMETER, TODAY, CHECK_OUT_PARAMETER, TODAY.plusYears(1));
         }
         LocalDate checkIn = LocalDate.parse(checkInDate);
         LocalDate checkOut = LocalDate.parse(checkOutDate);
         if (checkOut.compareTo(checkIn) < 0 || checkIn.compareTo(TODAY) < 0 || checkOut.compareTo(TODAY) < 0) {
-            return new HashMap<String, LocalDate>() {
-                {
-                    put(CHECK_IN_PARAMETER, checkInDefaultDate);
-                    put(CHECK_OUT_PARAMETER, checkOutDefaultDate);
-                }
-            };
+            return defineValueOfRelatedParameters(CHECK_IN_PARAMETER, TODAY, CHECK_OUT_PARAMETER, TODAY.plusYears(1));
         }
-        return new HashMap<String, LocalDate>() {
-            {
-                put(CHECK_IN_PARAMETER, checkIn);
-                put(CHECK_OUT_PARAMETER, checkOut);
-            }
-        };
+        return defineValueOfRelatedParameters(CHECK_IN_PARAMETER, checkIn, CHECK_OUT_PARAMETER, checkOut);
     }
 
-    private Integer parseHeadcountParameter(String parameterName, Integer defaultValue) {
+    private Integer parseHeadcountParameter(String parameterName) {
         return Optional.ofNullable(parameterName)
                        .filter(this::isInstanceOfInteger)
-                       .map(headCountParameter -> ensureValidHeadCount(headCountParameter, defaultValue))
-                       .orElseGet(() -> defaultValue);
+                       .map(headCountParameter -> ensureValidHeadCount(headCountParameter, NOBODY))
+                       .orElseGet(() -> NOBODY);
     }
 
     private boolean isInstanceOfDouble(String priceParameter) {
@@ -153,5 +154,15 @@ public class AccommodationService {
             return defaultValue;
         }
         return Integer.parseInt(priceParameter);
+    }
+
+    private <T> HashMap<String, T> defineValueOfRelatedParameters(String nameOfTheParameter, T valueOfTheParameter,
+                                                                  String nameOfTheOtherParameter, T valueOfTheOtherParameter) {
+        return new HashMap<String, T>() {
+            {
+                put(nameOfTheParameter, valueOfTheParameter);
+                put(nameOfTheOtherParameter, valueOfTheOtherParameter);
+            }
+        };
     }
 }
