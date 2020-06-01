@@ -1,8 +1,10 @@
 package kr.codesquad.airbnb12.service;
 
 import kr.codesquad.airbnb12.dao.AccommodationDaoImpl;
+import kr.codesquad.airbnb12.domain.Accommodation;
 import kr.codesquad.airbnb12.domain.Image;
 import kr.codesquad.airbnb12.dto.AccommodationSummary;
+import kr.codesquad.airbnb12.dto.BookingDetailsResponseDto;
 import kr.codesquad.airbnb12.dto.FilteredAccommodationsResponseDto;
 import kr.codesquad.airbnb12.dto.TrimmedParameters;
 import kr.codesquad.airbnb12.util.ParsingParameterUtils;
@@ -16,8 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToParameterNames.*;
-import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.PRICE_DISTRIBUTION_SIZE;
-import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.PRICE_RANGE_DIFFERENCE;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
 
 @Service
 public class AccommodationService {
@@ -66,5 +67,17 @@ public class AccommodationService {
                                     .minimumPrice(priceParameters.get(MINIMUM_PRICE_PARAMETER))
                                     .maximumPrice(priceParameters.get(MAXIMUM_PRICE_PARAMETER))
                                     .build();
+    }
+
+    public BookingDetailsResponseDto getBookingDetails(Long accommodationId) {
+        Accommodation accommodation = accommodationDaoImpl.findAccommodationById(accommodationId);
+        return new BookingDetailsResponseDto.Builder()
+                                            .accommodationId(accommodation.getId())
+                                            .originalPrice(accommodation.getOriginalPrice())
+                                            .finalPrice(accommodation.getSalePrice())
+                                            .cleaningFee(accommodation.getCleaningFee())
+                                            .serviceFee(accommodation.getSalePrice() * SERVICE_FEE_RATE)
+                                            .tourismTax(accommodation.getSalePrice() * TOURISM_TAX_RATE)
+                                            .build();
     }
 }
