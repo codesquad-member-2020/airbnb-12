@@ -4,6 +4,7 @@ import kr.codesquad.airbnb12.domain.Accommodation;
 import kr.codesquad.airbnb12.domain.Image;
 import kr.codesquad.airbnb12.domain.Location;
 import kr.codesquad.airbnb12.dto.AccommodationSummary;
+import kr.codesquad.airbnb12.dto.TrimmedParameters;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -26,12 +27,31 @@ public class AccommodationDaoImpl implements AccommodationDao {
     }
 
     @Override
-    public List<AccommodationSummary> findAllAccommodationSummaries() {
-        String sql = "SELECT a.id, a.name, a.maximum_accommodates, a.original_price, " +
-                            "a.sale_price, a.is_super_host, a.grade, l.city " +
-                     "FROM accommodation a JOIN location l on l.id = a.location " +
-                     "ORDER BY a.id ASC";
-        return jdbcTemplate.query(sql,
+    public List<AccommodationSummary> findAllAccommodationSummaries(TrimmedParameters trimmedParameters) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                                                .addValue("headCount", trimmedParameters.getAdults()+trimmedParameters.getChildren())
+                                                .addValue("minimumPrice", trimmedParameters.getMinimumPrice())
+                                                .addValue("maximumPrice", trimmedParameters.getMaximumPrice())
+                                                .addValue("checkIn", trimmedParameters.getCheckIn())
+                                                .addValue("checkOut", trimmedParameters.getCheckOut());
+        String sql = "SELECT a.id, a.minimum_nights, a.maximum_nights, a.name, a.maximum_accommodates, " +
+                            "a.original_price, a.sale_price, a.is_super_host, a.grade, l.city " +
+                     "FROM accommodation a JOIN location l ON a.location = l.id " +
+                     "WHERE a.maximum_accommodates >= :headCount AND a.sale_price BETWEEN :minimumPrice AND :maximumPrice " +
+                     "AND (" +
+                     "  (SELECT IF(IF(b.check_in_date > :checkIn, TRUE, FALSE), IF(b.check_in_date > :checkOut, TRUE, FALSE)," +
+                     "             IF(b.check_out_date < :checkIn, TRUE, FALSE))" +
+                     "              OR IF(b.check_out_date <= :checkIn, TRUE, FALSE ) AS result" +
+                     "   FROM booking b" +
+                     "   WHERE b.accommodation = a.id AND b.bookable = FALSE) IS NULL" +
+                     "  OR" +
+                     "  (SELECT IF(IF(b.check_in_date > :checkIn, TRUE, FALSE), IF(b.check_in_date > :checkOut, TRUE, FALSE)," +
+                     "             IF(b.check_out_date < :checkIn, TRUE, FALSE))" +
+                     "              OR IF(b.check_out_date <= :checkIn, TRUE, FALSE) AS result" +
+                     "   FROM booking b" +
+                     "   WHERE b.accommodation = a.id AND b.bookable = FALSE ) IS TRUE) " +
+                     "ORDER BY a.id ASC;";
+        return namedParameterJdbcTemplate.query(sql, namedParameters,
                 (rs, rowNum) -> new AccommodationSummary.Builder()
                                                         .accommodationId(rs.getLong("id"))
                                                         .title(rs.getString("name"))
@@ -64,7 +84,9 @@ public class AccommodationDaoImpl implements AccommodationDao {
                                                  .cleaningFee(rs.getDouble("cleaning_fee"))
                                                  .superHost(rs.getBoolean("is_super_host"))
                                                  .grade(rs.getDouble("grade"))
-                                                 .location(new Location(rs.getLong("location"), rs.getString("country"), rs.getString("city")))
+                                                 .location(new Location(rs.getLong("location"),
+                                                                        rs.getString("country"),
+                                                                        rs.getString("city")))
                                                  .build());
     }
 

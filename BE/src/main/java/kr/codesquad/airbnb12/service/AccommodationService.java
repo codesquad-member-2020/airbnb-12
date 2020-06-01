@@ -4,14 +4,20 @@ import kr.codesquad.airbnb12.dao.AccommodationDaoImpl;
 import kr.codesquad.airbnb12.domain.Image;
 import kr.codesquad.airbnb12.dto.AccommodationSummary;
 import kr.codesquad.airbnb12.dto.FilteredAccommodationsResponseDto;
+import kr.codesquad.airbnb12.dto.TrimmedParameters;
+import kr.codesquad.airbnb12.util.ParsingParameterUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToParameterNames.*;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.PRICE_DISTRIBUTION_SIZE;
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.PRICE_RANGE_DIFFERENCE;
 
 @Service
 public class AccommodationService {
@@ -22,8 +28,9 @@ public class AccommodationService {
         this.accommodationDaoImpl = accommodationDaoImpl;
     }
 
-    public FilteredAccommodationsResponseDto getAllAccommodations() {
-        List<AccommodationSummary> accommodationSummaries = accommodationDaoImpl.findAllAccommodationSummaries();
+    public FilteredAccommodationsResponseDto getFilteredAccommodations(Map<String, String> requestParameters) {
+        TrimmedParameters trimmedParameters = trimRequestParameters(requestParameters);
+        List<AccommodationSummary> accommodationSummaries = accommodationDaoImpl.findAllAccommodationSummaries(trimmedParameters);
         List<Long> accommodationIds = accommodationSummaries.stream()
                                                             .map(AccommodationSummary::getAccommodationId)
                                                             .collect(Collectors.toList());
@@ -40,5 +47,24 @@ public class AccommodationService {
             accommodationSummary.setThumbnailImages(images);
         });
         return FilteredAccommodationsResponseDto.create(accommodationSummaries.size(), priceDistribution, accommodationSummaries);
+    }
+
+    private TrimmedParameters trimRequestParameters(Map<String, String> requestParameters) {
+        Map<String, LocalDate> dateParameters = ParsingParameterUtils.parseDateParameters(requestParameters.get(CHECK_IN_PARAMETER),
+                                                                                          requestParameters.get(CHECK_OUT_PARAMETER));
+        Map<String, Double> priceParameters = ParsingParameterUtils.parsePriceParameters(requestParameters.get(MINIMUM_PRICE_PARAMETER),
+                                                                                         requestParameters.get(MAXIMUM_PRICE_PARAMETER));
+        Integer adults = ParsingParameterUtils.parseHeadcountParameter(requestParameters.get(ADULT_PARAMETER));
+        Integer children = ParsingParameterUtils.parseHeadcountParameter(requestParameters.get(CHILDREN_PARAMETER));
+        Integer infants = ParsingParameterUtils.parseHeadcountParameter(requestParameters.get(INFANT_PARAMETER));
+        return new TrimmedParameters.Builder()
+                                    .checkIn(dateParameters.get(CHECK_IN_PARAMETER))
+                                    .checkOut(dateParameters.get(CHECK_OUT_PARAMETER))
+                                    .adults(adults)
+                                    .children(children)
+                                    .infants(infants)
+                                    .minimumPrice(priceParameters.get(MINIMUM_PRICE_PARAMETER))
+                                    .maximumPrice(priceParameters.get(MAXIMUM_PRICE_PARAMETER))
+                                    .build();
     }
 }
