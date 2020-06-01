@@ -69,8 +69,8 @@ public class AccommodationDaoImpl implements AccommodationDao {
         String sql = "SELECT a.id, a.name, a.description, a.maximum_accommodates, a.minimum_nights, " +
                             "a.maximum_nights, a.original_price, a.sale_price, a.cleaning_fee, a.is_super_host, " +
                             "a.grade, a.location, l.id, l.country, l.city " +
-                     "FROM accommodation a JOIN location l ON location.id = a.location " +
-                     "WHERE id = ?";
+                     "FROM accommodation a JOIN location l ON l.id = a.location " +
+                     "WHERE a.id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{accommodationId},
                 (rs, rowNum) -> new Accommodation.Builder()
                                                  .id(rs.getLong("id"))
