@@ -1,15 +1,13 @@
 package kr.codesquad.airbnb12.controller;
 
 import kr.codesquad.airbnb12.dto.BookingDetailsResponseDto;
+import kr.codesquad.airbnb12.dto.BookingRequestDto;
 import kr.codesquad.airbnb12.dto.FilteredAccommodationsResponseDto;
 import kr.codesquad.airbnb12.response.ApiResponse;
 import kr.codesquad.airbnb12.service.AccommodationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -31,5 +29,11 @@ public class AccommodationController {
     public ResponseEntity<ApiResponse<BookingDetailsResponseDto>> getBookingDetails(@PathVariable("accommodationId") Long accommodationId) {
         return new ResponseEntity<>(ApiResponse.OK(accommodationService.getBookingDetails(accommodationId)), HttpStatus.OK);
     }
+
+    @PostMapping("/accommodations/{accommodationId}")
+    public ResponseEntity<ApiResponse<Map<String, String>>> reserveAccommodation(@PathVariable("accommodationId") Long accommodationId, @RequestBody BookingRequestDto bookingRequestDto) {
+        return new ResponseEntity<>(ApiResponse.OK(accommodationService.reserveAccommodation(accommodationId, bookingRequestDto)), HttpStatus.OK);
+    }
+
 
 }
