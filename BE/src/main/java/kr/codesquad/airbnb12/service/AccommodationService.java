@@ -3,20 +3,15 @@ package kr.codesquad.airbnb12.service;
 import kr.codesquad.airbnb12.dao.AccommodationDaoImpl;
 import kr.codesquad.airbnb12.domain.Accommodation;
 import kr.codesquad.airbnb12.domain.Image;
-import kr.codesquad.airbnb12.dto.AccommodationSummary;
-import kr.codesquad.airbnb12.dto.BookingDetailsResponseDto;
-import kr.codesquad.airbnb12.dto.FilteredAccommodationsResponseDto;
-import kr.codesquad.airbnb12.dto.TrimmedParameters;
+import kr.codesquad.airbnb12.dto.*;
 import kr.codesquad.airbnb12.util.ParsingParameterUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToBooking.TODAY;
 import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToParameterNames.*;
 import static kr.codesquad.airbnb12.commonconstant.ConstantsRelatedToPrice.*;
 
@@ -79,5 +74,20 @@ public class AccommodationService {
                                             .serviceFee(accommodation.getSalePrice() * SERVICE_FEE_RATE)
                                             .tourismTax(accommodation.getSalePrice() * TOURISM_TAX_RATE)
                                             .build();
+    }
+
+    public Map<String, String> reserveAccommodation(Long accommodationId, BookingRequestDto bookingRequestDto) {
+        Map<String, String> response = new HashMap<>();
+        Accommodation accommodation = accommodationDaoImpl.findAccommodationById(accommodationId);
+        if (accommodation.getMaximumAccommodates() < bookingRequestDto.getAdults() + bookingRequestDto.getChildren()) {
+            response.put("message", "NONO");
+            return response;
+        }
+        AccommodationSummary bookableAccommodation = accommodationDaoImpl.findBookableAccommodation(accommodationId, bookingRequestDto);
+        Optional.ofNullable(bookableAccommodation)
+                .orElseThrow(RuntimeException::new);
+        accommodationDaoImpl.reserveAccommodation(accommodation, bookingRequestDto);
+        response.put("message", "OK");
+        return response;
     }
 }
