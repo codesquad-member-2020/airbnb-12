@@ -14,7 +14,6 @@ const ResetBtn = styled.button`
 const FormDate = () => {
   const dispatch = useDispatch();
   const { startDate, endDate } = useSelector(state => state.date);
-  console.log(startDate);
   const [focus, setFocus] = useState('startDate');
   const handleOnDateChange = date => dispatch(checkDate(date));
   const resetButton = () => (
