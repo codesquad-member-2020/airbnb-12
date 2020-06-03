@@ -6,6 +6,9 @@ export default createGlobalStyle`
     * {
         box-sizing : border-box;
     }
+    a {
+        text-decoration: none;
+    }
     .DateRangePicker {
         width:100%;
         > div {
