@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/accommodations")
 public class AccommodationController {
 
     private final AccommodationService accommodationService;
@@ -20,17 +21,17 @@ public class AccommodationController {
         this.accommodationService = accommodationService;
     }
 
-    @GetMapping("/accommodations")
+    @GetMapping("")
     public ResponseEntity<ApiResponse<FilteredAccommodationsResponseDto>> getFilteredAccommodations(@RequestParam Map<String, String> requestParameters) {
         return new ResponseEntity<>(ApiResponse.OK(accommodationService.getFilteredAccommodations(requestParameters)), HttpStatus.OK);
     }
 
-    @GetMapping("/accommodations/{accommodationId}")
+    @GetMapping("/{accommodationId}")
     public ResponseEntity<ApiResponse<BookingDetailsResponseDto>> getBookingDetails(@PathVariable("accommodationId") Long accommodationId) {
         return new ResponseEntity<>(ApiResponse.OK(accommodationService.getBookingDetails(accommodationId)), HttpStatus.OK);
     }
 
-    @PostMapping("/accommodations/{accommodationId}")
+    @PostMapping("/{accommodationId}")
     public ResponseEntity<ApiResponse<Map<String, String>>> reserveAccommodation(@PathVariable("accommodationId") Long accommodationId, @RequestBody BookingRequestDto bookingRequestDto) {
         return new ResponseEntity<>(ApiResponse.OK(accommodationService.reserveAccommodation(accommodationId, bookingRequestDto)), HttpStatus.OK);
     }
