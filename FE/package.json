@@ -25,10 +25,11 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
     "react-slick": "^0.26.1",
+    "react-with-styles": "^4.1.0",
     "redux": "^4.0.5",
+    "rheostat": "^4.1.1",
     "styled-components": "^5.1.0",
     "styled-reset": "^4.1.5",
-    "rheostat": "^4.1.1",
     "typescript": "^3.9.2"
   },
   "devDependencies": {
