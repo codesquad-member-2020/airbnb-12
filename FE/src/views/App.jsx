@@ -4,7 +4,6 @@ import GlobalStyles from '../styles/GlobalStyle';
 import FilterForm from './FilterForm';
 import SearchResult from './SearchResult';
 import Theme from '../styles/Theme';
-import FormPrice from './FilterForm/FormPrice'
 
 const App = () => {
 
@@ -12,7 +11,6 @@ const App = () => {
     <ThemeProvider theme={Theme}>
       <GlobalStyles />
       <FilterForm />
-      {/* <FormPrice /> */}
       <SearchResult />
     </ThemeProvider>
   );

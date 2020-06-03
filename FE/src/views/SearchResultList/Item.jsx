@@ -59,7 +59,7 @@ const BookingButton = styled.button`
 `;
 
 const Item = ({ item = {} }) => {
-  const { staying } = useSelector(state => state.date);
+  const { staying } = useSelector(state => state);
 
   return (
     <ItemDiv id={item.accommodationId}>

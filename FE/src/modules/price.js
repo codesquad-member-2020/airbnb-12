@@ -1,29 +1,7 @@
-const SAVE = 'price/SAVE';
-const GET_PRICE_DISTRIBUTION = 'price/GET_PRICE_DISTRIBUTION';
+// action type 
 
-export const save = data => ({ type: SAVE, data });
-export const getPriceDistribution = data => ({ type: GET_PRICE_DISTRIBUTION, data });
+// action creator
 
-const initialState = {
-    priceMin: null,
-    priceMax: null,
-    priceDistribution: null,
-};
+// initial state
 
-export default function price(state = initialState, action) {
-    switch (action.type) {
-        case SAVE:
-            return {
-                ...state,
-                priceMin: action.data.priceMin,
-                priceMax: action.data.priceMax
-            };
-        case GET_PRICE_DISTRIBUTION:
-            return {
-                ...state,
-                priceDistribution: action.data,
-            };
-        default:
-            return state;
-    }
-}
+// reducer

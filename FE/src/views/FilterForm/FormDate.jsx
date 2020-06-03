@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { configureDate } from '../../actions/filterAction';
 import { DateRangePicker } from 'react-dates';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import { configureDate } from '../../modules/date';
 
 const FormDate = () => {
   const dispatch = useDispatch();
@@ -17,17 +17,16 @@ const FormDate = () => {
 
   const handleOnDateChange = (startDate, endDate) => {
     setdateRange(startDate, endDate);
-    dispatch(
-      configureDate({
-        checkin: startDate,
-        checkout: endDate,
-      })
-    );
+    // dispatch(
+    //   configureDate({
+    //     checkin: startDate,
+    //     checkout: endDate,
+    //   })
+    // );
   };
   useEffect(() => {
     dateRange.startDate && dateRange.endDate
       ? console.log('[체크인]', dateRange.startDate._d, '[체크아웃]', dateRange.endDate._d)
-      // ? handleOnDateChange(dateRange.startDate, dateRange.endDate)
       : console.log('날짜를 선택해주세요.');
   }, [dateRange]);
   return (
