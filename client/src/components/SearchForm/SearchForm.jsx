@@ -27,7 +27,7 @@ const SearchFormContentsDiv = styled.div`
 const SearchFormCloseBtn = styled.button`
   position: absolute;
   top: 20px;
-  right: 0%;
+  right: 10%;
   width: 32px;
   height: 32px;
   text-indent: -999em;

@@ -26,7 +26,7 @@ const SearchTitle = ({ totalCount }) => {
         {checkInDate && <span>{checkOutDate ? `${checkInDate} ~ ${checkOutDate}` : checkInDate}</span>}
         {totalGuest && (
           <span>
-            게스트 {totalGuest}명 {infants && `유아 ${infants}명`}
+            게스트 {totalGuest}명 {infants > 0 && `, 유아 ${infants}명`}
           </span>
         )}
       </Summary>
