@@ -9,6 +9,7 @@ const initialState = {
   endDate: null,
   checkInDate: null,
   checkOutDate: null,
+  staying: 1,
 };
 
 export default function date(state = initialState, action) {
@@ -34,6 +35,7 @@ export default function date(state = initialState, action) {
         ...action.date,
         checkInDate: checkIn,
         checkOutDate: checkOut,
+        staying: getStaying(state.checkInDate, state.checkOutDate)
       };
     case RESET:
       return {
@@ -43,4 +45,8 @@ export default function date(state = initialState, action) {
     default:
       return state;
   }
+}
+
+const getStaying = (checkin, checkout) => {
+  return (new Date(checkout).getTime() - new Date(checkin).getTime()) / (1000 * 60 * 60 * 24)
 }
