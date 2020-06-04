@@ -20,7 +20,7 @@ const SearchMoreBtn = styled.button`
 `;
 
 const SearchList = ({ data }) => {
-  const SET_NUMBER = 20;
+  const SET_NUMBER = 16;
   const [dataLength, setDataLength] = useState(data.length);
   const [startPoint, setStartPoint] = useState(0);
   const [endPoint, setEndPoint] = useState(SET_NUMBER);
@@ -28,12 +28,17 @@ const SearchList = ({ data }) => {
 
   const onClick = () => {
     setStartPoint(startPoint + SET_NUMBER);
-    return setSearchList(data.slice(startPoint, endPoint));
+    setEndPoint(endPoint + SET_NUMBER);
+    return setSearchList(searchList.concat(data.slice(startPoint, endPoint)));
   };
 
   useEffect(() => {
-    setDataLength(dataLength - SET_NUMBER);
+    setStartPoint(startPoint + SET_NUMBER);
     setEndPoint(endPoint + SET_NUMBER);
+  }, []);
+
+  useEffect(() => {
+    setDataLength(dataLength - SET_NUMBER);
   }, [startPoint]);
 
   return (
