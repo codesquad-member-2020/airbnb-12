@@ -4,9 +4,7 @@ import useAsync from '../utils/useAsync';
 import { URL } from '../constants/url';
 import SearchTitle from '../components/SearchList/SearchTitle';
 import SearchList from '../components/SearchList';
-import { useDispatch, useSelector } from "react-redux"
-// import { getPriceDistribution } from '../modules/price';
-
+import { useSelector } from "react-redux"
 
 const SearchListWrapDiv = styled.div``;
 const SearchListInnerDiv = styled.div`
@@ -46,9 +44,6 @@ const SearchListContainer = () => {
   if (!data) return null;
 
   const { totalCount, priceDistribution, accommodations } = data.data;
-
-  // const dispatch = useDispatch();
-  // dispatch(getPriceDistribution(priceDistribution));
 
   return (
     <SearchListWrapDiv>
