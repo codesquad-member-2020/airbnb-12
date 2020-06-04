@@ -11,8 +11,9 @@ const Summary = styled.p`
   }
 `;
 const Title = styled.h2`
-  font-weight: bold;
+  font-weight: normal;
   font-size: 32px;
+  letter-spacing: -1px;
 `;
 
 const SearchTitle = ({ totalCount }) => {

@@ -20,6 +20,7 @@ const GeustCounterDiv = styled.div`
     span {
       display: block;
       margin: 5px 0 10px;
+      font-weight: 300;
       font-size: 14px;
       color: #888;
     }
