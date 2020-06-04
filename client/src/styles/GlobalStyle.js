@@ -32,6 +32,7 @@ export default createGlobalStyle`
     .DayPicker {
         margin: 0 auto;
         box-shadow: none;
+        text-align: center;
     }
     .DateInput {
         display:none;

@@ -16,7 +16,14 @@ const SearchMoreBtn = styled.button`
   border: 0;
   border-radius: 5px;
   color: #fff;
-  background: #db0e65;
+  cursor: pointer;
+  background: rgb(230, 32, 81);
+  background: linear-gradient(90deg, rgba(230, 32, 81, 1) 0%, rgba(218, 13, 101, 1) 100%);
+  transition: all 0.3s;
+  &:hover {
+    background: rgb(230, 34, 80);
+    background: linear-gradient(90deg, rgba(230, 34, 80, 1) 0%, rgba(230, 34, 80, 1) 100%);
+  }
 `;
 
 const SearchList = ({ data }) => {

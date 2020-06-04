@@ -57,6 +57,43 @@ const GeustCounterDiv = styled.div`
     border-left: 0;
   }
 `;
+const ResetBtn = styled.button`
+  position: relative;
+  width: 65px;
+  padding: 10px 15px;
+  font-size: 12px;
+  color: #333;
+  line-height: 1;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  background: #e7e7e7;
+  transition: all 0.3s;
+  z-index: 1;
+  &:hover {
+    border: 1px solid #aaa;
+    background: #b9b9b9;
+  }
+`;
+const SaveBtn = styled.button`
+  position: relative;
+  width: 65px;
+  padding: 10px 15px;
+  margin: 0 5px;
+  font-size: 12px;
+  color: #fff;
+  line-height: 1;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  background: rgb(230, 32, 81);
+  background: linear-gradient(90deg, rgba(230, 32, 81, 1) 0%, rgba(218, 13, 101, 1) 100%);
+  transition: all 0.3s;
+  z-index: 1;
+  &:hover {
+    border: 1px solid #e62250;
+    background: rgb(230, 34, 80);
+    background: linear-gradient(90deg, rgba(230, 34, 80, 1) 0%, rgba(230, 34, 80, 1) 100%);
+  }
+`;
 
 const GuestCounter = ({ title, subtitle, count, increase, decrease }) => {
   return (
@@ -126,8 +163,8 @@ const FormGuest = () => {
           decrease={onClickDecreaseInfants}
         />
       </GuestCounterWrap>
-      <button onClick={onReset}>초기화</button>
-      <button onClick={onSave}>저장</button>
+      <ResetBtn onClick={onReset}>초기화</ResetBtn>
+      <SaveBtn onClick={onSave}>저장</SaveBtn>
     </FormGuestWrap>
   );
 };
