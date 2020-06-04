@@ -26,14 +26,14 @@ const SearchList = ({ data }) => {
   const [endPoint, setEndPoint] = useState(SET_NUMBER);
   const [searchList, setSearchList] = useState(data.slice(startPoint, endPoint));
 
-  const test = () => {
-    return setStartPoint(startPoint + SET_NUMBER);
+  const onClick = () => {
+    setStartPoint(startPoint + SET_NUMBER);
+    return setSearchList(data.slice(startPoint, endPoint));
   };
 
   useEffect(() => {
     setDataLength(dataLength - SET_NUMBER);
     setEndPoint(endPoint + SET_NUMBER);
-    setSearchList(searchList.concat(data.slice(startPoint, endPoint)));
   }, [startPoint]);
 
   return (
@@ -41,7 +41,7 @@ const SearchList = ({ data }) => {
       {searchList.map((accommodation, index) => {
         return <SearchItem key={index} contents={accommodation} width="25%" />;
       })}
-      {dataLength > 0 && <SearchMoreBtn onClick={test}>{dataLength}개 더보기</SearchMoreBtn>}
+      {dataLength > 0 && <SearchMoreBtn onClick={onClick}>{dataLength}개 더보기</SearchMoreBtn>}
     </SearchListDiv>
   );
 };
