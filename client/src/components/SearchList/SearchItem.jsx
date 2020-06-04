@@ -18,7 +18,9 @@ const ItemInfoDesc = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-const DescLocation = styled.span``;
+const DescLocation = styled.span`
+  color: #888;
+`;
 const DescBadge = styled.span`
   display: inline-block;
   padding: 0 5px;
@@ -26,6 +28,7 @@ const DescBadge = styled.span`
   font-weight: normal;
   font-size: 14px;
   line-height: 18px;
+  color: #333;
   border: 1px solid #222;
   border-radius: 5px;
 `;
@@ -40,6 +43,7 @@ const ItemInfoTitle = styled.p`
   overflow: hidden;
   margin: 5px 0;
   font-size: 18px;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;

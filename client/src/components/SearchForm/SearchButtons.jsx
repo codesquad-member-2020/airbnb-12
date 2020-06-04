@@ -29,7 +29,6 @@ const SearchBtn = styled.button`
   }
   > span {
     display: block;
-    font-weight: 500;
     font-size: 12px;
     color: #888;
   }

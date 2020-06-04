@@ -25,6 +25,7 @@ const HeadersFilterBtn = styled.div`
   > span {
     display: inline-block;
     padding: 10px;
+    font-weight: 300;
     line-height: 1;
     border-left: 1px solid rgba(0, 0, 0, 0.05);
     cursor: pointer;
