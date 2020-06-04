@@ -7,10 +7,7 @@ const SearchButtonDiv = styled.div`
   padding: 20px 0;
 `;
 const SearchBtn = styled.button`
-  width: calc(33.3% - 60px);
-`;
-const SearchResultBtn = styled.button`
-  width: 180px;
+  width: 33.3%;
 `;
 const SearchButton = ({ formType, onOpenForm, title }) => {
   const onClick = () => onOpenForm(formType);
@@ -35,7 +32,6 @@ const SearchButtons = ({ onOpenForm }) => {
         onOpenForm={onOpenForm}
       />
       <SearchButton formType={SEARCH_FORM.TYPE.PRICE} title="요금" onOpenForm={onOpenForm} />
-      <SearchResultBtn>검색</SearchResultBtn>
     </SearchButtonDiv>
   );
 };
