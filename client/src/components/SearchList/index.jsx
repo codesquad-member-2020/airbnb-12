@@ -34,19 +34,17 @@ const SearchList = ({ data }) => {
   const [searchList, setSearchList] = useState(data.slice(startPoint, endPoint));
 
   const onClick = () => {
+    setDataLength(dataLength - SET_NUMBER);
     setStartPoint(startPoint + SET_NUMBER);
     setEndPoint(endPoint + SET_NUMBER);
     return setSearchList(searchList.concat(data.slice(startPoint, endPoint)));
   };
 
   useEffect(() => {
+    setDataLength(dataLength - SET_NUMBER);
     setStartPoint(startPoint + SET_NUMBER);
     setEndPoint(endPoint + SET_NUMBER);
   }, []);
-
-  useEffect(() => {
-    setDataLength(dataLength - SET_NUMBER);
-  }, [startPoint]);
 
   return (
     <SearchListDiv>
