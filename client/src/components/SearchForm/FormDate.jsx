@@ -8,7 +8,7 @@ import 'react-dates/lib/css/_datepicker.css';
 
 const ResetBtn = styled.button`
   position: relative;
-  width: 65px;
+  width: 70px;
   padding: 10px 15px;
   font-size: 12px;
   color: #333;
