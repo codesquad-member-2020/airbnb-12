@@ -11,7 +11,7 @@ const SliderWrap = styled.div`
 `;
 const ResetBtn = styled.button`
   position: relative;
-  width: 65px;
+  width: 70px;
   padding: 10px 15px;
   font-size: 12px;
   color: #333;
@@ -28,7 +28,7 @@ const ResetBtn = styled.button`
 `;
 const SaveBtn = styled.button`
   position: relative;
-  width: 65px;
+  width: 70px;
   padding: 10px 15px;
   margin: 0 5px;
   font-size: 12px;
