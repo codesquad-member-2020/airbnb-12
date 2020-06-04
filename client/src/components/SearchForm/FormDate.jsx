@@ -14,11 +14,19 @@ const ResetBtn = styled.button`
 const FormDate = () => {
   const dispatch = useDispatch();
   const { startDate, endDate } = useSelector(state => state.date);
+  const [checkIn, setCheckIn] = useState(startDate);
+  const [checkOut, setCheckOut] = useState(endDate);
   const [focus, setFocus] = useState('startDate');
-  const handleOnDateChange = date => dispatch(checkDate(date));
+  const handleOnDateChange = date => {
+    setCheckIn(date.startDate);
+    setCheckOut(date.endDate);
+    if (focus === 'endDate') dispatch(checkDate(date));
+  }
   const resetButton = () => (
     <ResetBtn
       onClick={() => {
+        setCheckIn(null);
+        setCheckOut(null);
         setFocus('startDate');
         return dispatch(reset());
       }}
@@ -30,10 +38,10 @@ const FormDate = () => {
     <div>
       <DateRangePicker
         startDatePlaceholderText=""
-        startDate={startDate}
+        startDate={checkIn}
         onDatesChange={handleOnDateChange}
         endDatePlaceholderText=""
-        endDate={endDate}
+        endDate={checkOut}
         numberOfMonths={2}
         showClearDates={false}
         focusedInput={focus}

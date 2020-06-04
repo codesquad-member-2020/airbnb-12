@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { SEARCH_FORM } from '../../constants';
-
 const SearchButtonDiv = styled.div`
   padding: 20px 20%;
 `;
@@ -28,16 +27,12 @@ const SearchBtn = styled.button`
       border: 2px solid #222;
     }
   }
-
   > span {
     display: block;
     font-weight: 500;
     font-size: 12px;
     color: #888;
   }
-`;
-const SearchResultBtn = styled.button`
-  width: 180px;
 `;
 const SearchButton = ({ formType, onOpenForm, title, text, viewContents }) => {
   const onClick = () => onOpenForm(formType);
@@ -48,7 +43,6 @@ const SearchButton = ({ formType, onOpenForm, title, text, viewContents }) => {
     </SearchBtn>
   );
 };
-
 const SearchButtons = ({ onOpenForm, viewContents }) => {
   const { checkInDate, checkOutDate } = useSelector(state => state.date);
   const { totalGuest, infants } = useSelector(state => state.guest);
@@ -71,9 +65,7 @@ const SearchButtons = ({ onOpenForm, viewContents }) => {
         onOpenForm={onOpenForm}
       />
       <SearchButton viewContents={viewContents} formType={SEARCH_FORM.TYPE.PRICE} title="요금" text="요금" onOpenForm={onOpenForm} />
-      {/* <SearchResultBtn>검색</SearchResultBtn> */}
     </SearchButtonDiv>
   );
 };
-
 export default SearchButtons;
