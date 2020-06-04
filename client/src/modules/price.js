@@ -7,8 +7,8 @@ export const reset = () => ({ type: RESET });
 export const getPriceDistribution = data => ({ type: GET_PRICE_DISTRIBUTION, data });
 
 const initialState = {
-  priceMin: '',
-  priceMax: '',
+  priceMin: undefined,
+  priceMax: undefined,
   priceDistribution: null,
 };
 
