@@ -111,8 +111,17 @@ export default createGlobalStyle`
     }
     .slick-slider {
         overflow: hidden;
+        height:0;
+        padding-top:66.25%;
+        font-size:0;
         border-radius: 5px;
-        font-size: 0;
+    }
+    .slick-list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
     }
     .slick-prev, .slick-next {
         z-index: 1;
@@ -122,5 +131,15 @@ export default createGlobalStyle`
         &.slick-next {
             right: 10px;
         }
+    }
+    .slick-track {
+        display: flex !important;
+        height: 100%;
+    }
+    .slick-slide > div {
+        height: 100%;
+    }
+    .slick-slide img {
+        height: 100%;
     }
 `;
