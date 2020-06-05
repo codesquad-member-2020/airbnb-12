@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import useAsync from '../utils/useAsync';
 import { URL } from '../constants/url';
 import SearchTitle from '../components/SearchList/SearchTitle';
 import SearchList from '../components/SearchList';
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+// import { getPriceDistribution } from '../modules/price';
+
 
 const SearchListWrapDiv = styled.div``;
 const SearchListInnerDiv = styled.div`
@@ -16,6 +18,7 @@ const SearchListInnerDiv = styled.div`
 `;
 
 const SearchListContainer = () => {
+  const dispatch = useDispatch();
   const { checkInDate, checkOutDate, adults, children, infants, priceMin, priceMax } = useSelector(state => ({
     checkInDate: state.date.checkInDate,
     checkOutDate: state.date.checkOutDate,
@@ -44,6 +47,9 @@ const SearchListContainer = () => {
   if (!data) return null;
 
   const { totalCount, priceDistribution, accommodations } = data.data;
+
+  // dispatch(getPriceDistribution(priceDistribution));
+  // console.log(priceDistribution)
 
   return (
     <SearchListWrapDiv>
