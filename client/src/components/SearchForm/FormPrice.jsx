@@ -93,8 +93,8 @@ const FormPrice = () => {
   }));
 
   const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
-  const [leftDimWidth, setLeftDimWidth] = useState(0);
-  const [rightDimWidth, setRightDimWidth] = useState(0);
+  const [leftDimWidth, setLeftDimWidth] = useState(minPrice / 5);
+  const [rightDimWidth, setRightDimWidth] = useState((500-maxPrice) / 5);
 
   const handleChange = (event, newPriceRange) => {
     setPriceRange(newPriceRange);
@@ -104,6 +104,8 @@ const FormPrice = () => {
 
   const onReset = () => {
     setPriceRange([0, 500]);
+    setLeftDimWidth(0);
+    setRightDimWidth(0);
     dispatch(reset());
   };
 
