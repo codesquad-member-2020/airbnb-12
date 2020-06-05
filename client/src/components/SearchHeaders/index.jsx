@@ -68,8 +68,10 @@ const HeadersUtils = styled.div`
 const SearchHeaders = ({ onOpenForm }) => {
   const { checkInDate, checkOutDate } = useSelector(state => state.date);
   const { totalGuest, infants } = useSelector(state => state.guest);
+  const { priceMin, priceMax } = useSelector(state => state.price);
   const dateCompleted = `${checkInDate} ~ ${checkOutDate}`;
   const infantsMessage = infants ? `, 유아 ${infants}명` : '';
+  const priceCompleted = `$${priceMin} ~ $${priceMax}`;
   const onClickDate = () => onOpenForm('date');
   const onClickGuest = () => onOpenForm('guest');
   const onClickPrice = () => onOpenForm('price');
@@ -79,7 +81,7 @@ const SearchHeaders = ({ onOpenForm }) => {
       <HeadersFilterBtn>
         <span onClick={onClickDate}>{checkInDate ? (checkOutDate ? dateCompleted : checkInDate) : '날짜'}</span>
         <span onClick={onClickGuest}>{totalGuest ? `게스트 ${totalGuest}명${infantsMessage} ` : '인원'}</span>
-        <span onClick={onClickPrice}>요금</span>
+        <span onClick={onClickPrice}>{priceMax ? (priceMin ? priceCompleted : `최대 $${priceMax}`) : '요금'}</span>
       </HeadersFilterBtn>
       <HeadersUtils>
         <a href="#">도움말</a>

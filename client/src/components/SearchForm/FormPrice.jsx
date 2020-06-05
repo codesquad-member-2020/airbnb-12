@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { reset, save } from '../../modules/price';
-// import Slider from '@material-ui/core/Slider';
-// import { withStyles } from '@material-ui/core/styles';
-import AirbnbThumbComponent, { AirbnbSlider } from './AirbnbSlider';
 import styled from 'styled-components';
+
+import Slider from '@material-ui/core/Slider';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 
 const SliderWrap = styled.div`
   padding: 50px 30% 20px;
@@ -73,18 +74,27 @@ const FormPrice = () => {
     );
   };
 
+  const theme = createMuiTheme({
+    palette: {
+      primary: {
+        main: '#000',
+      },
+    },
+  });
+
   return (
     <>
       <SliderWrap>
-        <AirbnbSlider
+      <ThemeProvider theme={theme}>
+        <Slider
           value={priceRange}
-          onChange={handleChange}
           min={0}
           max={500}
+          onChange={handleChange}
           valueLabelDisplay="on"
-          aria-labelledby="range-slider"
-          // ThumbComponent={AirbnbThumbComponent}
+          valueLabelFormat={value => `$${value}`}
         />
+      </ThemeProvider>
       </SliderWrap>
       <ResetBtn onClick={onReset}>초기화</ResetBtn>
       <SaveBtn onClick={onSave}>저장</SaveBtn>
